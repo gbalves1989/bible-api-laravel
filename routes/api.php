@@ -19,6 +19,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('/livro', [LivroController::class, 'index']);
     Route::get('/livro/{id}', [LivroController::class, 'show']);
     Route::put('/livro/{id}', [LivroController::class, 'update']);
+    Route::patch('/livro/{id}', [LivroController::class, 'upload']);
     Route::delete('/livro/{id}', [LivroController::class, 'destroy']);
 
     //Versiculos

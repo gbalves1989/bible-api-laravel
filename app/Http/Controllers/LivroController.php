@@ -39,6 +39,11 @@ class LivroController extends Controller
         return LivroService::update($request, $id);
     }
 
+    public function upload(Request $request, string $id)
+    {
+        return LivroService::upload($request, $id);
+    }
+
     /**
      * Remove the specified resource from storage.
      */

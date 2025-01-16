@@ -35,6 +35,13 @@ class LivroRepository implements Repository
         return $model;
     }
 
+    public static function upload(string $path, Model $model)
+    {
+        $model->update(['capa' => $path]);
+
+        return $model;
+    }
+
     public static function destroy(string $id)
     {
         Livro::destroy($id);

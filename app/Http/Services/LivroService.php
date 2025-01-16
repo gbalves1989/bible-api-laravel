@@ -6,6 +6,7 @@ use App\Http\Repositories\LivroRepository;
 use App\Http\Repositories\TestamentoRepository;
 use App\Http\Repositories\VersiculoRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class LivroService implements Service
 {
@@ -89,6 +90,8 @@ class LivroService implements Service
                 ]);
         }
 
+        $livro->capa = Storage::disk('public')->url($livro->capa);
+
         return response()->json([
                 'status_code' => 200,
                 'error' => false, 
@@ -158,6 +161,45 @@ class LivroService implements Service
                 'status_code' => 202,
                 'error' => false, 
                 'message' => 'Livro atualizado com sucesso.',
+                'data' => $livro
+            ], 202, 
+            [
+                'Content-Type' => 'application/json;charset=UTF-8', 
+                'Charset' => 'utf-8',
+                'Accept' => 'application/json'
+            ]);
+    }
+
+    public static function upload(Request $request, string $id)
+    {
+        $livro = LivroRepository::show($id);
+
+        if (!$livro) {
+            return response()->json([
+                    'status_code' => 404,
+                    'error' => true, 
+                    'message' => 'Livro não foi encontrado.',
+                    'data' => []
+                ], 404, 
+                [
+                    'Content-Type' => 'application/json;charset=UTF-8', 
+                    'Charset' => 'utf-8',
+                    'Accept' => 'application/json'
+                ]);
+        }
+
+        if ($livro->capa != '') {
+            Storage::disk('public')->delete($livro->capa);
+        }
+
+        $path = $request->capa->store('capa_livro', 'public');
+
+        $livro = LivroRepository::upload($path, $livro);
+
+        return response()->json([
+                'status_code' => 202,
+                'error' => false, 
+                'message' => 'Capa atualizada com sucesso.',
                 'data' => $livro
             ], 202, 
             [
