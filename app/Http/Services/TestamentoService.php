@@ -71,7 +71,10 @@ class TestamentoService implements Service
                 'status_code' => 200,
                 'error' => false, 
                 'message' => 'Testamento encontrado com sucesso.',
-                'data' => $testamento
+                'data' => [
+                    'testamento' => $testamento,
+                    'livros' => $testamento->livros
+                ]
             ], 200, 
             [
                 'Content-Type' => 'application/json;charset=UTF-8', 

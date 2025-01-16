@@ -10,4 +10,13 @@ class Testamento extends Model
     use HasFactory;
 
     protected $fillable = ['nome'];
+
+    protected $hidden = [
+        'livros',
+    ];
+
+    public function livros()
+    {
+        return $this->hasMany(Livro::class);
+    }
 }

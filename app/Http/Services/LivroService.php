@@ -93,7 +93,11 @@ class LivroService implements Service
                 'status_code' => 200,
                 'error' => false, 
                 'message' => 'Livro encontrado com sucesso.',
-                'data' => $livro
+                'data' => [
+                    'livro' => $livro,
+                    'testamento' => $livro->testamento,
+                    'versiculos' => $livro->versiculos
+                ]
             ], 200, 
             [
                 'Content-Type' => 'application/json;charset=UTF-8', 

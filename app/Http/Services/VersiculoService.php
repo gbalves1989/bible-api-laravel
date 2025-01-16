@@ -92,7 +92,10 @@ class VersiculoService implements Service
                 'status_code' => 200,
                 'error' => false, 
                 'message' => 'Versiculo encontrado com sucesso.',
-                'data' => $versiculo
+                'data' => [
+                    'versiculo' => $versiculo,
+                    'livro' => $versiculo->livro
+                ]
             ], 200, 
             [
                 'Content-Type' => 'application/json;charset=UTF-8', 
