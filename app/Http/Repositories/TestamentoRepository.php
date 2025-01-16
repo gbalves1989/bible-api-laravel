@@ -15,12 +15,14 @@ class TestamentoRepository implements Repository
 
     public static function index()
     {
-        return Testamento::all();
+        return Testamento::with('livros')->get();
     }
 
     public static function show(string $id)
     {
-        return Testamento::find($id);
+        return Testamento::where('id', '=', $id)
+            ->with('livros')
+            ->first();
     }
 
     public static function update(Request $request, Model $model)

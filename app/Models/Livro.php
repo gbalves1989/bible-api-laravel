@@ -9,9 +9,9 @@ class Livro extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nome', 'posicao', 'abreviacao', 'testamento_id', 'capa'];
+    protected $fillable = ['nome', 'posicao', 'abreviacao', 'capa'];
 
-    protected $hidden = ['testamento', 'versiculos', 'testamento_id'];
+    protected $hidden = ['testamento_id', 'created_at', 'updated_at'];
 
     public function testamento()
     {

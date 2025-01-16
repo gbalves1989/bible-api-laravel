@@ -12,7 +12,8 @@ class Testamento extends Model
     protected $fillable = ['nome'];
 
     protected $hidden = [
-        'livros',
+        'created_at',
+        'updated_at'
     ];
 
     public function livros()

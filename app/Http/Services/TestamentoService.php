@@ -4,6 +4,8 @@ namespace App\Http\Services;
 
 use App\Http\Repositories\LivroRepository;
 use App\Http\Repositories\TestamentoRepository;
+use App\Http\Resources\TestamentoAllResource;
+use App\Http\Resources\TestamentoResource;
 use Illuminate\Http\Request;
 
 class TestamentoService implements Service
@@ -21,12 +23,12 @@ class TestamentoService implements Service
 
         return response()->json([
                 'status_code' => 201,
-                'error' => false, 
+                'error' => false,
                 'message' => 'Testamento cadastrado com sucesso.',
                 'data' => $testamento
-            ], 201, 
+            ], 201,
             [
-                'Content-Type' => 'application/json;charset=UTF-8', 
+                'Content-Type' => 'application/json;charset=UTF-8',
                 'Charset' => 'utf-8',
                 'Accept' => 'application/json'
             ]);
@@ -38,12 +40,12 @@ class TestamentoService implements Service
 
         return response()->json([
                 'status_code' => 200,
-                'error' => false, 
+                'error' => false,
                 'message' => 'Lista de testamentos retornado com sucesso.',
                 'data' => $testamentos
-            ], 200, 
+            ], 200,
             [
-                'Content-Type' => 'application/json;charset=UTF-8', 
+                'Content-Type' => 'application/json;charset=UTF-8',
                 'Charset' => 'utf-8',
                 'Accept' => 'application/json'
             ]);
@@ -56,12 +58,12 @@ class TestamentoService implements Service
         if (!$testamento) {
             return response()->json([
                     'status_code' => 404,
-                    'error' => true, 
+                    'error' => true,
                     'message' => 'Testamento não foi encontrado.',
                     'data' => []
-                ], 404, 
+                ], 404,
                 [
-                    'Content-Type' => 'application/json;charset=UTF-8', 
+                    'Content-Type' => 'application/json;charset=UTF-8',
                     'Charset' => 'utf-8',
                     'Accept' => 'application/json'
                 ]);
@@ -69,15 +71,12 @@ class TestamentoService implements Service
 
         return response()->json([
                 'status_code' => 200,
-                'error' => false, 
+                'error' => false,
                 'message' => 'Testamento encontrado com sucesso.',
-                'data' => [
-                    'testamento' => $testamento,
-                    'livros' => $testamento->livros
-                ]
-            ], 200, 
+                'data' => $testamento
+            ], 200,
             [
-                'Content-Type' => 'application/json;charset=UTF-8', 
+                'Content-Type' => 'application/json;charset=UTF-8',
                 'Charset' => 'utf-8',
                 'Accept' => 'application/json'
             ]);
@@ -91,18 +90,18 @@ class TestamentoService implements Service
             'nome.required' => 'Nome do testamento deve ser informado.',
             'nome.unique' => 'Nome do testamento já está cadastrado.'
         ]);
-        
+
         $testamento = TestamentoRepository::show($id);
 
         if (!$testamento) {
             return response()->json([
                     'status_code' => 404,
-                    'error' => true, 
+                    'error' => true,
                     'message' => 'Testamento não foi encontrado.',
                     'data' => []
-                ], 404, 
+                ], 404,
                 [
-                    'Content-Type' => 'application/json;charset=UTF-8', 
+                    'Content-Type' => 'application/json;charset=UTF-8',
                     'Charset' => 'utf-8',
                     'Accept' => 'application/json'
                 ]);
@@ -112,12 +111,12 @@ class TestamentoService implements Service
 
         return response()->json([
                 'status_code' => 202,
-                'error' => false, 
+                'error' => false,
                 'message' => 'Testamento atualizado com sucesso.',
                 'data' => $testamento
-            ], 202, 
+            ], 202,
             [
-                'Content-Type' => 'application/json;charset=UTF-8', 
+                'Content-Type' => 'application/json;charset=UTF-8',
                 'Charset' => 'utf-8',
                 'Accept' => 'application/json'
             ]);
@@ -130,12 +129,12 @@ class TestamentoService implements Service
         if (!$testamento) {
             return response()->json([
                     'status_code' => 404,
-                    'error' => true, 
+                    'error' => true,
                     'message' => 'Testamento não foi encontrado.',
                     'data' => []
-                ], 404, 
+                ], 404,
                 [
-                    'Content-Type' => 'application/json;charset=UTF-8', 
+                    'Content-Type' => 'application/json;charset=UTF-8',
                     'Charset' => 'utf-8',
                     'Accept' => 'application/json'
                 ]);
@@ -146,12 +145,12 @@ class TestamentoService implements Service
         if ($livros) {
             return response()->json([
                     'status_code' => 400,
-                    'error' => true, 
+                    'error' => true,
                     'message' => 'Testamento possui livros cadastrados.',
                     'data' => []
-                ], 400, 
+                ], 400,
                 [
-                    'Content-Type' => 'application/json;charset=UTF-8', 
+                    'Content-Type' => 'application/json;charset=UTF-8',
                     'Charset' => 'utf-8',
                     'Accept' => 'application/json'
                 ]);
@@ -161,12 +160,12 @@ class TestamentoService implements Service
 
         return response()->json([
                 'status_code' => 204,
-                'error' => false, 
+                'error' => false,
                 'message' => 'Testamento excluído com sucesso.',
                 'data' => $testamento
-            ], 200, 
+            ], 200,
             [
-                'Content-Type' => 'application/json;charset=UTF-8', 
+                'Content-Type' => 'application/json;charset=UTF-8',
                 'Charset' => 'utf-8',
                 'Accept' => 'application/json'
             ]);
