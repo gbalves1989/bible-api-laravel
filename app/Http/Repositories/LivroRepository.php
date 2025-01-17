@@ -5,6 +5,7 @@ namespace App\Http\Repositories;
 use App\Models\Livro;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class LivroRepository implements Repository
 {
@@ -15,17 +16,19 @@ class LivroRepository implements Repository
 
     public static function index()
     {
-        return Livro::all();
+        return Livro::with(['testamento', 'versiculos'])->get();
     }
 
     public static function show(string $id)
     {
-        return Livro::find($id);
+        return Livro::where('id', '=', $id)
+            ->with(['testamento', 'versiculos'])
+            ->get();
     }
 
     public static function showByTestamento(string $id)
     {
-        return Livro::where('testamento_id', '=', $id);
+        return Livro::where('testamento_id', '=', $id)->first();
     }
 
     public static function update(Request $request, Model $model)

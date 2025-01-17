@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TestamentoRequest;
 use App\Http\Services\TestamentoService;
-use Illuminate\Http\Request;
 
 class TestamentoController extends Controller
 {
@@ -18,7 +18,7 @@ class TestamentoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TestamentoRequest $request)
     {
         return TestamentoService::store($request);
     }
@@ -34,7 +34,7 @@ class TestamentoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(TestamentoRequest $request, string $id)
     {
         return TestamentoService::update($request, $id);
     }

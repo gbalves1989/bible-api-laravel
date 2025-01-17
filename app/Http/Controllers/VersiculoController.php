@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\VersiculoRequest;
 use App\Http\Services\VersiculoService;
-use Illuminate\Http\Request;
 
 class VersiculoController extends Controller
 {
@@ -18,7 +18,7 @@ class VersiculoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(VersiculoRequest $request)
     {
         return VersiculoService::store($request);
     }
@@ -34,7 +34,7 @@ class VersiculoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(VersiculoRequest $request, string $id)
     {
         return VersiculoService::update($request, $id);
     }

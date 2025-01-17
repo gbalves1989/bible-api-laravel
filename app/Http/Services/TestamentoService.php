@@ -4,20 +4,14 @@ namespace App\Http\Services;
 
 use App\Http\Repositories\LivroRepository;
 use App\Http\Repositories\TestamentoRepository;
-use App\Http\Resources\TestamentoAllResource;
-use App\Http\Resources\TestamentoResource;
-use Illuminate\Http\Request;
+use App\Http\Requests\TestamentoRequest;
+use App\Http\Requests\VersiculoRequest;
 
 class TestamentoService implements Service
 {
-    public static function store(Request $request)
+    public static function store(VersiculoRequest|TestamentoRequest $request)
     {
-        $validated = $request->validate([
-            'nome' => 'required|unique:testamentos|max:255',
-        ],[
-            'nome.required' => 'Nome do testamento deve ser informado.',
-            'nome.unique' => 'Nome do testamento já está cadastrado.'
-        ]);
+        $validation = $request->validated();
 
         $testamento = TestamentoRepository::store($request);
 
@@ -25,7 +19,25 @@ class TestamentoService implements Service
                 'status_code' => 201,
                 'error' => false,
                 'message' => 'Testamento cadastrado com sucesso.',
-                'data' => $testamento
+                'data' => [
+                    'links' => [
+                        [
+                            'rel' => 'Informações de um testamento',
+                            'type' => 'GET',
+                            'link' => route('testamento.show', $testamento->id)
+                        ],
+                        [
+                            'rel' => 'Atualizar um testamento',
+                            'type' => 'PUT',
+                            'link' => route('testamento.update', $testamento->id)
+                        ],
+                        [
+                            'rel' => 'Remover um testamento',
+                            'type' => 'DELETE',
+                            'link' => route('testamento.destroy', $testamento->id)
+                        ]
+                    ]
+                ]
             ], 201,
             [
                 'Content-Type' => 'application/json;charset=UTF-8',
@@ -73,7 +85,21 @@ class TestamentoService implements Service
                 'status_code' => 200,
                 'error' => false,
                 'message' => 'Testamento encontrado com sucesso.',
-                'data' => $testamento
+                'data' => [
+                    'testamento' => $testamento,
+                    'links' => [
+                        [
+                            'rel' => 'Atualizar um testamento',
+                            'type' => 'PUT',
+                            'link' => route('testamento.update', $testamento->id)
+                        ],
+                        [
+                            'rel' => 'Remover um testamento',
+                            'type' => 'DELETE',
+                            'link' => route('testamento.destroy', $testamento->id)
+                        ]
+                    ]
+                ]
             ], 200,
             [
                 'Content-Type' => 'application/json;charset=UTF-8',
@@ -82,14 +108,9 @@ class TestamentoService implements Service
             ]);
     }
 
-    public static function update(Request $request, string $id)
+    public static function update(VersiculoRequest|TestamentoRequest $request, string $id)
     {
-        $validated = $request->validate([
-            'nome' => 'required|unique:testamentos|max:255',
-        ],[
-            'nome.required' => 'Nome do testamento deve ser informado.',
-            'nome.unique' => 'Nome do testamento já está cadastrado.'
-        ]);
+        $validation = $request->validated();
 
         $testamento = TestamentoRepository::show($id);
 
@@ -113,7 +134,20 @@ class TestamentoService implements Service
                 'status_code' => 202,
                 'error' => false,
                 'message' => 'Testamento atualizado com sucesso.',
-                'data' => $testamento
+                'data' => [
+                    'links' => [
+                        [
+                            'rel' => 'Informações de um testamento',
+                            'type' => 'GET',
+                            'link' => route('testamento.show', $testamento->id)
+                        ],
+                        [
+                            'rel' => 'Remover um testamento',
+                            'type' => 'DELETE',
+                            'link' => route('testamento.destroy', $testamento->id)
+                        ]
+                    ]
+                ]
             ], 202,
             [
                 'Content-Type' => 'application/json;charset=UTF-8',
@@ -162,7 +196,9 @@ class TestamentoService implements Service
                 'status_code' => 204,
                 'error' => false,
                 'message' => 'Testamento excluído com sucesso.',
-                'data' => $testamento
+                'data' => [
+                    'testamento' => $testamento
+                ]
             ], 200,
             [
                 'Content-Type' => 'application/json;charset=UTF-8',

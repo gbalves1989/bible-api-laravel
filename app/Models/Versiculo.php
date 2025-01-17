@@ -11,7 +11,7 @@ class Versiculo extends Model
 
     protected $fillable = ['capitulo', 'versiculo', 'texto', 'livro_id'];
 
-    protected $hidden = ['livro', 'livro_id'];
+    protected $hidden = ['livro_id', 'created_at', 'updated_at'];
 
     public function livro()
     {
