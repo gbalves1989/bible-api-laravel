@@ -31,6 +31,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     //Users
     Route::post('/user/logout', [AuthController::class, 'logout']);
+    Route::get('/user/me', [AuthController::class, 'me']);
 });
 
 Route::prefix('v1')->group(function () {

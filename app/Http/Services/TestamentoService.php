@@ -4,12 +4,12 @@ namespace App\Http\Services;
 
 use App\Http\Repositories\LivroRepository;
 use App\Http\Repositories\TestamentoRepository;
-use App\Http\Requests\TestamentoRequest;
-use App\Http\Requests\VersiculoRequest;
+use App\Http\Resources\TestamentoResource;
+use Illuminate\Foundation\Http\FormRequest;
 
 class TestamentoService implements Service
 {
-    public static function store(VersiculoRequest|TestamentoRequest $request)
+    public static function store(FormRequest $request)
     {
         $validation = $request->validated();
 
@@ -20,6 +20,7 @@ class TestamentoService implements Service
                 'error' => false,
                 'message' => 'Testamento cadastrado com sucesso.',
                 'data' => [
+                    'testamento' => $testamento,
                     'links' => [
                         [
                             'rel' => 'Informações de um testamento',
@@ -48,7 +49,7 @@ class TestamentoService implements Service
 
     public static function index()
     {
-        $testamentos = TestamentoRepository::index();
+        $testamentos = TestamentoResource::collection(TestamentoRepository::index());
 
         return response()->json([
                 'status_code' => 200,
@@ -108,7 +109,7 @@ class TestamentoService implements Service
             ]);
     }
 
-    public static function update(VersiculoRequest|TestamentoRequest $request, string $id)
+    public static function update(FormRequest $request, string $id)
     {
         $validation = $request->validated();
 
@@ -135,6 +136,7 @@ class TestamentoService implements Service
                 'error' => false,
                 'message' => 'Testamento atualizado com sucesso.',
                 'data' => [
+                    'testamento' => $testamento,
                     'links' => [
                         [
                             'rel' => 'Informações de um testamento',

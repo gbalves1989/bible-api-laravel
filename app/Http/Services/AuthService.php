@@ -3,25 +3,16 @@
 namespace App\Http\Services;
 
 use App\Http\Repositories\AuthRepository;
+use App\Http\Resources\AuthResource;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
-    public static function signup(Request $request)
+    public static function signup(FormRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed',
-        ],[
-            'name.required' => 'Nome do usuário deve ser informado.',
-            'email.email' => 'Informe um e-mail válido.',
-            'email.required' => 'E-mail do usuário deve ser informado.',
-            'email.unique' => 'E-mail já está cadastrado.',
-            'password.required' => 'Senha do usuário deve ser informado.',
-            'password.confirmed' => 'Confirmação de senha inválido.',
-        ]);
+        $validation = $request->validated();
 
         $user = AuthRepository::store($request);
 
@@ -29,41 +20,35 @@ class AuthService
 
         return response()->json([
                 'status_code' => 201,
-                'error' => false, 
+                'error' => false,
                 'message' => 'Usuário cadastrado com sucesso.',
-                'token' => $token->plainTextToken,
-                'data' => $user
-            ], 201, 
+                'data' => [
+                    'user' => $user,
+                    'token' => $token->plainTextToken
+                ]
+            ], 201,
             [
-                'Content-Type' => 'application/json;charset=UTF-8', 
+                'Content-Type' => 'application/json;charset=UTF-8',
                 'Charset' => 'utf-8',
                 'Accept' => 'application/json'
             ]);
     }
 
-    public static function signin(Request $request)
+    public static function signin(FormRequest $request)
     {
-        $validated = $request->validate([
-            'email' => 'required|email|exists:users',
-            'password' => 'required',
-        ],[
-            'email.email' => 'Informe um e-mail válido.',
-            'email.required' => 'E-mail do usuário deve ser informado.',
-            'email.exists' => 'E-mail não cadastrado.',
-            'password.required' => 'Senha do usuário deve ser informado.',
-        ]);
+        $validation = $request->validated();
 
         $user = AuthRepository::showByEmail($request->email);
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                     'status_code' => 401,
-                    'error' => true, 
+                    'error' => true,
                     'message' => 'Credenciais inválidas.',
                     'data' => []
-                ], 401, 
+                ], 401,
                 [
-                    'Content-Type' => 'application/json;charset=UTF-8', 
+                    'Content-Type' => 'application/json;charset=UTF-8',
                     'Charset' => 'utf-8',
                     'Accept' => 'application/json'
                 ]);
@@ -73,13 +58,15 @@ class AuthService
 
         return response()->json([
                 'status_code' => 201,
-                'error' => false, 
-                'message' => 'Usuário cadastrado com sucesso.',
-                'token' => $token->plainTextToken,
-                'data' => $user
-            ], 201, 
+                'error' => false,
+                'message' => 'Usuário logado com sucesso.',
+                'data' => [
+                    'user' => $user,
+                    'token' => $token->plainTextToken
+                ]
+            ], 201,
             [
-                'Content-Type' => 'application/json;charset=UTF-8', 
+                'Content-Type' => 'application/json;charset=UTF-8',
                 'Charset' => 'utf-8',
                 'Accept' => 'application/json'
             ]);
@@ -91,14 +78,36 @@ class AuthService
 
         return response()->json([
             'status_code' => 200,
-            'error' => true, 
+            'error' => true,
             'message' => 'Usuário deslogado com sucesso.',
             'data' => []
-        ], 200, 
+        ], 200,
         [
-            'Content-Type' => 'application/json;charset=UTF-8', 
+            'Content-Type' => 'application/json;charset=UTF-8',
             'Charset' => 'utf-8',
             'Accept' => 'application/json'
         ]);
+    }
+
+    public static function me(Request $request)
+    {
+        $user = $request->user();
+        return response()->json([
+                'status_code' => 200,
+                'error' => false,
+                'message' => 'Informações do usuário retornadas com sucesso.',
+                'data' => [
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email
+                    ]
+                ]
+            ], 200,
+            [
+                'Content-Type' => 'application/json;charset=UTF-8',
+                'Charset' => 'utf-8',
+                'Accept' => 'application/json'
+            ]);
     }
 }

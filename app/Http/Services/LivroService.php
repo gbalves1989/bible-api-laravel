@@ -5,24 +5,15 @@ namespace App\Http\Services;
 use App\Http\Repositories\LivroRepository;
 use App\Http\Repositories\TestamentoRepository;
 use App\Http\Repositories\VersiculoRepository;
-use Illuminate\Http\Request;
+use App\Http\Resources\LivroResource;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Storage;
 
 class LivroService implements Service
 {
-    public static function store(Request $request)
+    public static function store(FormRequest $request)
     {
-        $validated = $request->validate([
-            'nome' => 'required|max:255',
-            'posicao' => 'required',
-            'abreviacao' => 'required',
-            'testamento_id' => 'required'
-        ],[
-            'nome.required' => 'Nome do livro deve ser informado.',
-            'posicao.required' => 'Posição do livro deve ser informado.',
-            'abreviacao.required' => 'Abreviação do livro deve ser informado.',
-            'testamento_id.required' => 'Testamento do livro deve ser informado.'
-        ]);
+        $validation = $request->validated();
 
         $testamento = TestamentoRepository::show($request['testamento_id']);
 
@@ -41,13 +32,36 @@ class LivroService implements Service
         }
 
         $livro = LivroRepository::store($request);
-        $livro = LivroRepository::show($livro->id);
 
         return response()->json([
                 'status_code' => 201,
                 'error' => false,
                 'message' => 'Livro cadastrado com sucesso.',
-                'data' => $livro
+                'data' => [
+                    'livro' => $livro,
+                    'links' => [
+                        [
+                            'rel' => 'Informações de um livro',
+                            'type' => 'GET',
+                            'link' => route('livro.show', $livro->id)
+                        ],
+                        [
+                            'rel' => 'Atualizar um livro',
+                            'type' => 'PUT',
+                            'link' => route('livro.update', $livro->id)
+                        ],
+                        [
+                            'rel' => 'Atualizar a capa de um livro',
+                            'type' => 'PATCH',
+                            'link' => route('livro.upload', $livro->id)
+                        ],
+                        [
+                            'rel' => 'Remover um testamento',
+                            'type' => 'DELETE',
+                            'link' => route('livro.destroy', $livro->id)
+                        ]
+                    ]
+                ]
             ], 201,
             [
                 'Content-Type' => 'application/json;charset=UTF-8',
@@ -58,7 +72,7 @@ class LivroService implements Service
 
     public static function index()
     {
-        $livros = LivroRepository::index();
+        $livros = LivroResource::collection(LivroRepository::index());
 
         return response()->json([
             'status_code' => 200,
@@ -95,7 +109,26 @@ class LivroService implements Service
                 'status_code' => 200,
                 'error' => false,
                 'message' => 'Livro encontrado com sucesso.',
-                'data' => $livro
+                'data' => [
+                    'livro' => $livro,
+                    'links' => [
+                        [
+                            'rel' => 'Atualizar um livro',
+                            'type' => 'PUT',
+                            'link' => route('livro.update', $livro->id)
+                        ],
+                        [
+                            'rel' => 'Atualizar a capa de um livro',
+                            'type' => 'PATCH',
+                            'link' => route('livro.upload', $livro->id)
+                        ],
+                        [
+                            'rel' => 'Remover um livro',
+                            'type' => 'DELETE',
+                            'link' => route('livro.destroy', $livro->id)
+                        ]
+                    ]
+                ]
             ], 200,
             [
                 'Content-Type' => 'application/json;charset=UTF-8',
@@ -104,19 +137,9 @@ class LivroService implements Service
             ]);
     }
 
-    public static function update(Request $request, string $id)
+    public static function update(FormRequest $request, string $id)
     {
-        $validated = $request->validate([
-            'nome' => 'required|max:255',
-            'posicao' => 'required',
-            'abreviacao' => 'required',
-            'testamento_id' => 'required'
-        ],[
-            'nome.required' => 'Nome do livro deve ser informado.',
-            'posicao.required' => 'Posição do livro deve ser informado.',
-            'abreviacao.required' => 'Abreviação do livro deve ser informado.',
-            'testamento_id.required' => 'Testamento do livro deve ser informado.'
-        ]);
+        $validation = $request->validated();
 
         $livro = LivroRepository::show($id);
 
@@ -150,14 +173,32 @@ class LivroService implements Service
                 ]);
         }
 
-        $livro = LivroRepository::update($request, $id);
-        $livro = LivroRepository::show($livro->id);
+        $livro = LivroRepository::update($request, $livro);
 
         return response()->json([
                 'status_code' => 202,
                 'error' => false,
                 'message' => 'Livro atualizado com sucesso.',
-                'data' => $livro
+                'data' => [
+                    'livro' => $livro,
+                    'links' => [
+                        [
+                            'rel' => 'Informações de um livro',
+                            'type' => 'GET',
+                            'link' => route('livro.show', $livro->id)
+                        ],
+                        [
+                            'rel' => 'Atualizar a capa de um livro',
+                            'type' => 'PATCH',
+                            'link' => route('livro.upload', $livro->id)
+                        ],
+                        [
+                            'rel' => 'Remover um livro',
+                            'type' => 'DELETE',
+                            'link' => route('livro.destroy', $livro->id)
+                        ]
+                    ]
+                ]
             ], 202,
             [
                 'Content-Type' => 'application/json;charset=UTF-8',
@@ -166,8 +207,10 @@ class LivroService implements Service
             ]);
     }
 
-    public static function upload(Request $request, string $id)
+    public static function upload(FormRequest $request, string $id)
     {
+        $validation = $request->validated();
+
         $livro = LivroRepository::show($id);
 
         if (!$livro) {
@@ -196,7 +239,26 @@ class LivroService implements Service
                 'status_code' => 202,
                 'error' => false,
                 'message' => 'Capa atualizada com sucesso.',
-                'data' => $livro
+                'data' => [
+                    'livro' => $livro,
+                    'links' => [
+                        [
+                            'rel' => 'Informações de um livro',
+                            'type' => 'GET',
+                            'link' => route('livro.show', $livro->id)
+                        ],
+                        [
+                            'rel' => 'Atualizar um livro',
+                            'type' => 'PUT',
+                            'link' => route('livro.update', $livro->id)
+                        ],
+                        [
+                            'rel' => 'Remover um livro',
+                            'type' => 'DELETE',
+                            'link' => route('livro.destroy', $livro->id)
+                        ]
+                    ]
+                ]
             ], 202,
             [
                 'Content-Type' => 'application/json;charset=UTF-8',
@@ -249,7 +311,9 @@ class LivroService implements Service
                 'status_code' => 204,
                 'error' => false,
                 'message' => 'Livro excluído com sucesso.',
-                'data' => $livro
+                'data' => [
+                    'livro' => $livro
+                ]
             ], 200,
             [
                 'Content-Type' => 'application/json;charset=UTF-8',

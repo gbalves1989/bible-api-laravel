@@ -11,6 +11,6 @@ interface Repository
     public static function store(FormRequest $request);
     public static function index();
     public static function show(string $id);
-    public static function update(Request $request, Model $model);
+    public static function update(FormRequest $request, Model $model);
     public static function destroy(string $id);
 }

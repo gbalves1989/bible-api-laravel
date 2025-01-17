@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LivroRequest;
+use App\Http\Requests\LivroUploadRequest;
 use App\Http\Services\LivroService;
-use Illuminate\Http\Request;
 
 class LivroController extends Controller
 {
@@ -18,7 +19,7 @@ class LivroController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(LivroRequest $request)
     {
         return LivroService::store($request);
     }
@@ -34,12 +35,12 @@ class LivroController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(LivroRequest $request, string $id)
     {
         return LivroService::update($request, $id);
     }
 
-    public function upload(Request $request, string $id)
+    public function upload(LivroUploadRequest $request, string $id)
     {
         return LivroService::upload($request, $id);
     }
